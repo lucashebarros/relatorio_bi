@@ -1,0 +1,22 @@
+{
+    "name": "azurebi",
+    "version": "1.0.0",
+    "description": "Gerenciador de Projetos no Azure",
+    "main": "index.js",
+    "scripts": {
+        "start": "func start",
+        "test": "echo \"No test specified\" && exit 1"
+    },
+    "dependencies": {
+        "@azure/cosmos": "^4.2.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.49.0"
+    },
+    "keywords": [],
+    "author": "Seu Nome",
+    "license": "ISC"
+}
