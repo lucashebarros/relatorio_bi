@@ -23,7 +23,7 @@ async function listarProjetos() {
       <td>${projeto.status}</td>
       <td>${projeto.dataInicio || 'N/A'}</td>
       <td>${projeto.dataFim || 'N/A'}</td>
-      <td>${projeto.progresso || 0}</td>
+      <td>${projeto.progresso || 0}%</td>
     `;
     table.appendChild(row);
 
@@ -53,7 +53,24 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
   });
 
   listarProjetos(); // Atualiza a lista de projetos
-  showSection('overview');
+  showSection('overview'); // Volta para a visão geral após adicionar o projeto
+});
+
+// Função para atualizar o status de um projeto
+document.getElementById('update-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const projetoId = document.getElementById('projeto-id').value;
+  const novoStatus = document.getElementById('novo-status').value;
+
+  await fetch(`${API_URL}/${projetoId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: novoStatus })
+  });
+
+  listarProjetos(); // Atualiza a lista de projetos
+  showSection('overview'); // Volta para a visão geral após atualizar o status
 });
 
 // Renderiza gráfico de progresso
