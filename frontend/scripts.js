@@ -24,6 +24,10 @@ async function listarProjetos() {
       <td>${projeto.dataInicio || 'N/A'}</td>
       <td>${projeto.dataFim || 'N/A'}</td>
       <td>${projeto.progresso || 0}%</td>
+      <td>
+        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}')">Alterar</button>
+        <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
+      </td>
     `;
     table.appendChild(row);
 
@@ -34,6 +38,13 @@ async function listarProjetos() {
   });
 
   renderizarGrafico(chartData);
+}
+
+// Função para preencher o formulário de atualização
+function setUpdateForm(id, statusAtual) {
+  document.getElementById('projeto-id').value = id;
+  document.getElementById('novo-status').value = statusAtual;
+  showSection('update-status');
 }
 
 // Função para criar projeto
@@ -72,6 +83,14 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
   listarProjetos(); // Atualiza a lista de projetos
   showSection('overview'); // Volta para a visão geral após atualizar o status
 });
+
+// Função para deletar projeto
+async function deletarProjeto(id) {
+  if (confirm('Tem certeza que deseja excluir este projeto?')) {
+    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    listarProjetos(); // Atualiza a lista de projetos
+  }
+}
 
 // Renderiza gráfico de progresso
 function renderizarGrafico(data) {
