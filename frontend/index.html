@@ -29,6 +29,7 @@
             <th>Data de Início</th>
             <th>Data de Fim</th>
             <th>Progresso (%)</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody id="projects-table">
@@ -52,6 +53,21 @@
         <input type="date" id="data-inicio" required>
         <input type="date" id="data-fim" required>
         <button type="submit">Adicionar</button>
+      </form>
+    </section>
+
+    <!-- Seção para Atualizar Status -->
+    <section id="update-status" class="section">
+      <h2>Atualizar Status do Projeto</h2>
+      <form id="update-form">
+        <input type="hidden" id="projeto-id">
+        <label for="novo-status">Novo Status:</label>
+        <select id="novo-status" required>
+          <option value="Parado">Parado</option>
+          <option value="Em Desenvolvimento">Em Desenvolvimento</option>
+          <option value="Concluído">Concluído</option>
+        </select>
+        <button type="submit">Atualizar</button>
       </form>
     </section>
   </main>
