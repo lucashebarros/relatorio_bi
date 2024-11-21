@@ -69,18 +69,39 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
   showSection('overview'); // Volta para a visão geral após adicionar o projeto
 });
 
-// Função para atualizar o status de um projeto
+// Função para atualizar status, data de início e data de fim
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const projetoId = document.getElementById('projeto-id').value;
-  const novoStatus = document.getElementById('novo-status').value;
+  const id = e.target.dataset.id;
+  const status = document.getElementById('novo-status').value;
+  const data_inicio = document.getElementById('novo-data-inicio').value;
+  const data_fim = document.getElementById('novo-data-fim').value;
 
-  await fetch(`${API_URL}/${projetoId}`, {
-    method: 'PATCH',
+  await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: novoStatus })
+    body: JSON.stringify({ status, data_inicio, data_fim })
   });
+
+  listarProjetos(); // Atualiza a lista de projetos
+  showSection('overview');
+});
+
+// Função para calcular progresso baseado nas datas
+function calcularProgresso(dataInicio, dataFim) {
+  if (!dataInicio || !dataFim) return 0;
+
+  const hoje = new Date();
+  const inicio = new Date(dataInicio);
+  const fim = new Date(dataFim);
+
+  if (hoje < inicio) return 0;
+  if (hoje > fim) return 100;
+
+  const progresso = Math.round(((hoje - inicio) / (fim - inicio)) * 100);
+  return progresso > 100 ? 100 : progresso;
+}
 
   listarProjetos(); // Atualiza a lista de projetos
   showSection('overview'); // Volta para a visão geral após atualizar o status
