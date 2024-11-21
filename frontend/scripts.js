@@ -3,10 +3,12 @@ const API_URL = "https://relatoriobi.azurewebsites.net/projetos"; // URL da API
 // Alterna entre as seções
 function showSection(sectionId) {
   document.querySelectorAll('.section').forEach(section => {
-    section.classList.remove('active');
+    section.style.display = 'none'; 
   });
-  document.getElementById(sectionId).classList.add('active');
+  document.getElementById(sectionId).style.display = 'block'; 
 }
+
+showSection('overview');
 
 // Função para listar projetos
 async function listarProjetos() {
