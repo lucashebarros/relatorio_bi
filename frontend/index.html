@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Projetos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Gerenciador de Projetos</h1>
+  
+  <section id="form-section">
+    <h2>Criar Projeto</h2>
+    <form id="create-form">
+      <input type="text" id="nome" placeholder="Nome do projeto" required>
+      <input type="text" id="descricao" placeholder="Descrição do projeto" required>
+      <select id="status" required>
+        <option value="Em andamento">Em andamento</option>
+        <option value="Concluído">Concluído</option>
+      </select>
+      <button type="submit">Criar</button>
+    </form>
+  </section>
+
+  <section id="projects-section">
+    <h2>Lista de Projetos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="projects-table">
+        <!-- Projetos serão inseridos aqui -->
+      </tbody>
+    </table>
+  </section>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
