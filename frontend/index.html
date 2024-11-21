@@ -3,42 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerenciador de Projetos</title>
+  <title>Gerenciamento de Projetos de BI</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Para gráficos -->
 </head>
 <body>
-  <h1>Gerenciador de Projetos</h1>
-  
-  <section id="form-section">
-    <h2>Criar Projeto</h2>
-    <form id="create-form">
-      <input type="text" id="nome" placeholder="Nome do projeto" required>
-      <input type="text" id="descricao" placeholder="Descrição do projeto" required>
-      <select id="status" required>
-        <option value="Em andamento">Em andamento</option>
-        <option value="Concluído">Concluído</option>
-      </select>
-      <button type="submit">Criar</button>
-    </form>
-  </section>
+  <header class="header">
+    <h1>Gerenciamento de Projetos de BI</h1>
+    <nav>
+      <button onclick="showSection('overview')">Visão Geral</button>
+      <button onclick="showSection('add-project')">Adicionar Projeto</button>
+      <button onclick="showSection('update-status')">Atualizar Status</button>
+    </nav>
+  </header>
 
-  <section id="projects-section">
-    <h2>Lista de Projetos</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Descrição</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="projects-table">
-        <!-- Projetos serão inseridos aqui -->
-      </tbody>
-    </table>
-  </section>
+  <main>
+    <!-- Visão Geral -->
+    <section id="overview" class="section">
+      <h2>Lista de Projetos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Data de Início</th>
+            <th>Data de Fim</th>
+            <th>Progresso (%)</th>
+          </tr>
+        </thead>
+        <tbody id="projects-table">
+          <!-- Dados inseridos dinamicamente -->
+        </tbody>
+      </table>
+      <canvas id="progress-chart" width="400" height="200"></canvas>
+    </section>
+
+    <!-- Adicionar Projeto -->
+    <section id="add-project" class="section hidden">
+      <h2>Adicionar Novo Projeto</h2>
+      <form id="create-form">
+        <input type="text" id="nome" placeholder="Nome do Projeto" required>
+        <textarea id="descricao" placeholder="Descrição" required></textarea>
+        <select id="status" required>
+          <option value="Parado">Parado</option>
+          <option value="Em Desenvolvimento">Em Desenvolvimento</option>
+          <option value="Concluído">Concluído</option>
+        </select>
+        <input type="date" id="data-inicio" required>
+        <input type="date" id="data-fim" required>
+        <button type="submit">Adicionar</button>
+      </form>
+    </section>
+  </main>
 
   <script src="scripts.js"></script>
 </body>
 </html>
+
