@@ -18,62 +18,59 @@
   </header>
 
   <main>
-    <!-- Visão Geral -->
-    <section id="overview" class="section">
-      <h2>Lista de Projetos</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Status</th>
-            <th>Data de Início</th>
-            <th>Data de Fim</th>
-            <th>Progresso (%)</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="projects-table">
-          <!-- Dados inseridos dinamicamente -->
-        </tbody>
-      </table>
-      <canvas id="progress-chart" width="400" height="200"></canvas>
-    </section>
+    <!-- Seção de Visão Geral -->
+<section id="overview" class="section">
+  <h2>Lista de Projetos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Status</th>
+        <th>Data Início</th>
+        <th>Data Fim</th>
+        <th>Progresso (%)</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="projects-table">
+      <!-- Projetos serão carregados aqui -->
+    </tbody>
+  </table>
+  <canvas id="progress-chart" width="400" height="200"></canvas>
+</section>
 
-    <!-- Adicionar Projeto -->
-    <section id="add-project" class="section hidden">
-      <h2>Adicionar Novo Projeto</h2>
-      <form id="create-form">
-        <input type="text" id="nome" placeholder="Nome do Projeto" required>
-        <textarea id="descricao" placeholder="Descrição" required></textarea>
-        <select id="status" required>
-          <option value="Parado">Parado</option>
-          <option value="Em Desenvolvimento">Em Desenvolvimento</option>
-          <option value="Concluído">Concluído</option>
-        </select>
-        <input type="date" id="data-inicio" required>
-        <input type="date" id="data-fim" required>
-        <button type="submit">Adicionar</button>
-      </form>
-    </section>
+<!-- Seção para Adicionar Projetos -->
+<section id="add-project" class="section">
+  <h2>Adicionar Novo Projeto</h2>
+  <form id="create-form">
+    <input type="text" id="nome" placeholder="Nome do Projeto" required>
+    <textarea id="descricao" placeholder="Descrição" required></textarea>
+    <select id="status" required>
+      <option value="Parado">Parado</option>
+      <option value="Em Desenvolvimento">Em Desenvolvimento</option>
+      <option value="Concluído">Concluído</option>
+    </select>
+    <input type="date" id="data-inicio" required>
+    <input type="date" id="data-fim" required>
+    <button type="submit">Adicionar</button>
+  </form>
+</section>
 
-    <!-- Atualizar Status -->
-    <section id="update-status" class="section hidden">
-      <h2>Atualizar Status do Projeto</h2>
-      <form id="update-form">
-        <input type="hidden" id="projeto-id">
-        <label for="novo-status">Novo Status:</label>
-        <select id="novo-status" required>
-          <option value="Parado">Parado</option>
-          <option value="Em Desenvolvimento">Em Desenvolvimento</option>
-          <option value="Concluído">Concluído</option>
-        </select>
-        <label for="novo-data-inicio">Nova Data de Início:</label>
-        <input type="date" id="novo-data-inicio">
-        <label for="novo-data-fim">Nova Data de Fim:</label>
-        <input type="date" id="novo-data-fim">
-        <button type="submit">Atualizar</button>
-      </form>
-    </section>
+<!-- Seção para Atualizar Status -->
+<section id="update-status" class="section">
+  <h2>Atualizar Status do Projeto</h2>
+  <form id="update-form">
+    <input type="hidden" id="projeto-id">
+    <label for="novo-status">Novo Status:</label>
+    <select id="novo-status" required>
+      <option value="Parado">Parado</option>
+      <option value="Em Desenvolvimento">Em Desenvolvimento</option>
+      <option value="Concluído">Concluído</option>
+    </select>
+    <button type="submit">Atualizar</button>
+  </form>
+</section>
+
   </main>
 
   <script src="scripts.js"></script>
