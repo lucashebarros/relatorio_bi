@@ -9,7 +9,11 @@ const port = process.env.PORT || 3000;
 const cors = require('cors');
 
 // Habilitar CORS
-app.use(cors());
+app.use(cors({
+    origin: '*', // Permite todas as origens. Ajuste isso para maior segurança.
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
 
 
 // Configuração do Cosmos DB
