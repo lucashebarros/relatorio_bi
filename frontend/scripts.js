@@ -40,12 +40,45 @@ async function listarProjetos() {
   renderizarGrafico(chartData);
 }
 
-// Função para preencher o formulário de atualização
-function setUpdateForm(id, statusAtual) {
-  document.getElementById('projeto-id').value = id;
-  document.getElementById('novo-status').value = statusAtual;
-  showSection('update-status');
+async function preencherListaProjetos() {
+  const response = await fetch(API_URL);
+  const projetos = await response.json();
+  const select = document.getElementById('projeto-nome');
+
+  select.innerHTML = ''; // Limpa o dropdown
+  projetos.forEach(projeto => {
+    const option = document.createElement('option');
+    option.value = projeto.id; // O ID do projeto será o valor
+    option.textContent = projeto.nome; // O nome do projeto será exibido
+    select.appendChild(option);
+  });
 }
+
+// Função para atualizar o status de um projeto
+document.getElementById('update-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID do projeto selecionado
+  const novoStatus = document.getElementById('novo-status').value;
+
+  try {
+    await fetch(`${API_URL}/${projetoId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: novoStatus })
+    });
+    alert('Status atualizado com sucesso!');
+    listarProjetos(); // Atualiza a lista de projetos
+    showSection('overview'); // Volta para a visão geral
+  } catch (error) {
+    console.error('Erro ao atualizar o status:', error);
+    alert('Erro ao atualizar o status. Tente novamente mais tarde.');
+  }
+});
+
+// Atualiza a lista suspensa ao carregar a página ou mudar para a seção de atualização
+document.addEventListener('DOMContentLoaded', preencherListaProjetos);
+document.querySelector('button[onclick="showSection(\'update-status\')"]').addEventListener('click', preencherListaProjetos);
 
 // Função para criar projeto
 document.getElementById('create-form').addEventListener('submit', async (e) => {
