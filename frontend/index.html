@@ -54,18 +54,23 @@
   </section>
 
   <!-- Seção de Atualizar Status -->
-  <section id="update-status" class="section">
-    <h2>Atualizar Status do Projeto</h2>
-    <form id="update-form">
-      <input type="number" id="projeto-id" placeholder="ID do Projeto" required>
-      <select id="novo-status" required>
-        <option value="Em andamento">Em andamento</option>
-        <option value="Concluído">Concluído</option>
-        <option value="Parado">Parado</option>
-      </select>
-      <button type="submit">Atualizar</button>
-    </form>
-  </section>
+<!-- Seção de Atualizar Status -->
+<section id="update-status" class="section">
+  <h2>Atualizar Status do Projeto</h2>
+  <form id="update-form">
+    <label for="projeto-nome">Selecione o Projeto:</label>
+    <select id="projeto-nome" required>
+      <!-- Projetos serão carregados dinamicamente -->
+    </select>
+    <label for="novo-status">Novo Status:</label>
+    <select id="novo-status" required>
+      <option value="Em andamento">Em andamento</option>
+      <option value="Concluído">Concluído</option>
+      <option value="Parado">Parado</option>
+    </select>
+    <button type="submit">Atualizar</button>
+  </form>
+</section>
 
   <script src="scripts.js"></script>
 </body>
