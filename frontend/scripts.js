@@ -87,9 +87,47 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
 // Função para deletar projeto
 async function deletarProjeto(id) {
   if (confirm('Tem certeza que deseja excluir este projeto?')) {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-    listarProjetos(); // Atualiza a lista de projetos
+    try {
+      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      alert('Projeto excluído com sucesso!');
+      listarProjetos(); // Atualiza a lista de projetos
+    } catch (error) {
+      console.error('Erro ao excluir o projeto:', error);
+      alert('Erro ao excluir o projeto. Tente novamente mais tarde.');
+    }
   }
+}
+
+// Adicionando o botão de exclusão na tabela ao listar projetos
+async function listarProjetos() {
+  const response = await fetch(API_URL);
+  const projetos = await response.json();
+  const table = document.getElementById('projects-table');
+  const chartData = [];
+
+  table.innerHTML = ''; // Limpa a tabela
+  projetos.forEach(projeto => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${projeto.nome}</td>
+      <td>${projeto.status}</td>
+      <td>${projeto.dataInicio || 'N/A'}</td>
+      <td>${projeto.dataFim || 'N/A'}</td>
+      <td>${projeto.progresso || 0}%</td>
+      <td>
+        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}')">Alterar</button>
+        <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
+      </td>
+    `;
+    table.appendChild(row);
+
+    chartData.push({
+      label: projeto.nome,
+      data: projeto.progresso || 0
+    });
+  });
+
+  renderizarGrafico(chartData);
 }
 
 // Renderiza gráfico de progresso
