@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', preencherListaProjetos);
 document.querySelector('button[onclick="showSection(\'update-status\')"]').addEventListener('click', preencherListaProjetos);
 
 // Função para criar projeto
-document.getElementById('create-form').addEventListener('submit', async (e) => {
+document.getElementById('add-project').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const nome = document.getElementById('nome').value;
