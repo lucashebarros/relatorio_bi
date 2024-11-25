@@ -60,12 +60,13 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
 
   const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID do projeto selecionado
   const novoStatus = document.getElementById('novo-status').value;
+  const statusAtual = document.getElementById('status-atual').value;
 
   try {
     await fetch(`${API_URL}/${projetoId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: novoStatus })
+      body: JSON.stringify({ status: novoStatus, statusAtual })
     });
     alert('Status atualizado com sucesso!');
     listarProjetos(); // Atualiza a lista de projetos
