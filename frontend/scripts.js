@@ -89,11 +89,13 @@ document.getElementById('add-project').addEventListener('submit', async (e) => {
   const descricao = document.getElementById('descricao').value;
   const status = document.getElementById('status').value;
   const dataInicio = document.getElementById('data-inicio').value;
+  const statusAtual = document.getElementById('status-atual').value;
+
 
   await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, descricao, status, dataInicio })
+    body: JSON.stringify({ nome, descricao, status, dataInicio, statusAtual  })
   });
 
   listarProjetos(); // Atualiza a lista de projetos
