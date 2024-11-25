@@ -10,8 +10,7 @@ function showSection(sectionId) {
 
 function setUpdateForm(id, statusAtual) {
   document.getElementById('projeto-id').value = id;
-  document.getElementById('novo-status').value = statusAtual;
-  document.getElementById('novo-status-atual').value = statusAtual; // Adiciona o valor do Status Atual
+  document.getElementById('statusAtual').value = statusAtual;
   showSection('update-status');
 }
 
@@ -97,7 +96,7 @@ document.getElementById('add-project').addEventListener('submit', async (e) => {
   const descricao = document.getElementById('descricao').value;
   const status = document.getElementById('status').value;
   const dataInicio = document.getElementById('data-inicio').value;
-  const statusAtual = document.getElementById('status-atual').value;
+  const statusAtual = document.getElementById('statusAtual').value;
 
 
   await fetch(API_URL, {
@@ -169,6 +168,7 @@ async function listarProjetos() {
       <td>${projeto.nome}</td>
       <td>${projeto.status}</td>
       <td>${projeto.dataInicio || 'N/A'}</td>
+      <td>${projeto.statusAtual}</td>
       <td>${projeto.progresso || 0}%</td>
       <td>
         <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}')">Alterar</button>
