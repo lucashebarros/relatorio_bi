@@ -100,6 +100,19 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
   showSection('overview'); // Volta para a visão geral após adicionar o projeto
 });
 
+// Função para calcular progresso baseado na data de início
+function calcularProgresso(dataInicio) {
+  if (!dataInicio) return 0;
+
+  const hoje = new Date();
+  const inicio = new Date(dataInicio);
+
+  if (hoje < inicio) return 0;
+
+  const progresso = Math.round(((hoje - inicio) / (30 * 24 * 60 * 60 * 1000)) * 100); // Progresso baseado em 30 dias
+  return progresso > 100 ? 100 : progresso;
+}
+
 // Função para atualizar o status de um projeto
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
