@@ -22,10 +22,10 @@ async function listarProjetos() {
       <td>${projeto.nome}</td>
       <td>${projeto.status}</td>
       <td>${projeto.dataInicio || 'N/A'}</td>
-      <td>${projeto.dataFim || 'N/A'}</td>
+      <td>${projeto.statusAtual || 'N/A'}</td>
       <td>${projeto.progresso || 0}%</td>
       <td>
-        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}')">Alterar</button>
+        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}',  '${projeto.statusAtual || ''}')">Alterar</button>
         <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
       </td>
     `;
