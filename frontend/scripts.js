@@ -93,7 +93,7 @@ document.getElementById('add-project').addEventListener('submit', async (e) => {
   await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, descricao, status, dataInicio, dataFim })
+    body: JSON.stringify({ nome, descricao, status, dataInicio })
   });
 
   listarProjetos(); // Atualiza a lista de projetos
@@ -158,7 +158,6 @@ async function listarProjetos() {
       <td>${projeto.nome}</td>
       <td>${projeto.status}</td>
       <td>${projeto.dataInicio || 'N/A'}</td>
-      <td>${projeto.dataFim || 'N/A'}</td>
       <td>${projeto.progresso || 0}%</td>
       <td>
         <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}')">Alterar</button>
