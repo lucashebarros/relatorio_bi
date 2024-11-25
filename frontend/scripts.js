@@ -8,6 +8,14 @@ function showSection(sectionId) {
   document.getElementById(sectionId).classList.add('active');
 }
 
+function setUpdateForm(id, statusAtual) {
+  document.getElementById('projeto-id').value = id;
+  document.getElementById('novo-status').value = statusAtual;
+  document.getElementById('novo-status-atual').value = statusAtual; // Adiciona o valor do Status Atual
+  showSection('update-status');
+}
+
+
 // Função para listar projetos
 async function listarProjetos() {
   const response = await fetch(API_URL);
@@ -121,6 +129,7 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
 
   const projetoId = document.getElementById('projeto-id').value;
   const novoStatus = document.getElementById('novo-status').value;
+  const statusAtual = document.getElementById('statusAtual').value;
 
   await fetch(`${API_URL}/${projetoId}`, {
     method: 'PATCH',
