@@ -37,24 +37,23 @@ h1, h2 {
   text-align: center;
 }
 
+/* Ocultar todas as seções por padrão */
 .section {
-  display: flex;
+  display: none; 
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
 }
 
+/* Mostrar apenas a seção ativa */
 .section.active {
-  display: block;
+  display: flex;
 }
 
-.hidden {
-  display: none;
-}
-
+/* Tabela estilizada */
 table {
-  width: 100%;
-  margin: 20px 0;
+  width: 90%;
+  margin: 20px auto;
   border-collapse: collapse;
   background-color: #1a1a1a;
 }
@@ -110,4 +109,9 @@ form button {
 
 form button:hover {
   background-color: #218838;
+}
+
+/* Estilo para o gráfico */
+canvas {
+  margin-top: 20px;
 }
