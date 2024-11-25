@@ -95,14 +95,14 @@ app.post('/projetos', async (req, res) => {
 // Atualizar Projeto (PUT)
 app.put('/projetos/:id', async (req, res) => {
     const { id } = req.params;
-    const { nome, descricao, status } = req.body;
+    const { nome, descricao, status, statusAtual  } = req.body;
 
     if (!nome || !descricao || !status) {
         return res.status(400).json({ error: 'Por favor, forneça todos os campos necessários.' });
     }
 
     try {
-        const projetoAtualizado = { id, nome, descricao, status, data_atualizacao: new Date().toISOString() };
+        const projetoAtualizado = { id, nome, descricao, status, statusAtual , data_atualizacao: new Date().toISOString() };
         await container.item(id, id).replace(projetoAtualizado);
         res.status(200).json({ message: 'Projeto atualizado com sucesso!' });
     } catch (error) {
