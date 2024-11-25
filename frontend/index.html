@@ -16,42 +16,43 @@
     <button onclick="showSection('update-status')">Atualizar Status</button>
   </nav>
 
-  <!-- Seção de Visão Geral -->
-  <section id="overview" class="section active">
-    <h2>Lista de Projetos</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Status</th>
-          <th>Data Início</th>
-          <th>Data Fim</th>
-          <th>Progresso (%)</th>
-        </tr>
-      </thead>
-      <tbody id="projects-table">
-        <!-- Projetos serão carregados aqui -->
-      </tbody>
-    </table>
+<!-- Seção de Visão Geral -->
+<section id="overview" class="section active">
+  <h2>Lista de Projetos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Status</th>
+        <th>Data Início</th>
+        <th>Status Atual</th>
+        <th>Progresso (%)</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="projects-table">
+      <!-- Projetos serão carregados aqui -->
+    </tbody>
+  </table>
     <canvas id="progress-chart" width="400" height="200"></canvas>
-  </section>
+</section>
 
-  <!-- Seção de Adicionar Projeto -->
-  <section id="add-project" class="section">
-    <h2>Adicionar Novo Projeto</h2>
-    <form id="create-form">
-      <input type="text" id="nome" placeholder="Nome do Projeto" required>
-      <textarea id="descricao" placeholder="Descrição" required></textarea>
-      <select id="status" required>
-        <option value="Em andamento">Em andamento</option>
-        <option value="Concluído">Concluído</option>
-        <option value="Parado">Parado</option>
-      </select>
-      <input type="date" id="data-inicio" required>
-      <input type="date" id="data-fim" required>
-      <button type="submit">Adicionar</button>
-    </form>
-  </section>
+<!-- Seção de Adicionar Projeto -->
+<section id="add-project" class="section">
+  <h2>Adicionar Novo Projeto</h2>
+  <form id="create-form">
+    <input type="text" id="nome" placeholder="Nome do Projeto" required>
+    <textarea id="descricao" placeholder="Descrição" required></textarea>
+    <select id="status" required>
+      <option value="Em andamento">Em andamento</option>
+      <option value="Concluído">Concluído</option>
+      <option value="Parado">Parado</option>
+    </select>
+    <input type="date" id="data-inicio" required>
+    <textarea id="status-atual" placeholder="Descrição do Status Atual e Prazo" required></textarea>
+    <button type="submit">Adicionar</button>
+  </form>
+</section>
 
   <!-- Seção de Atualizar Status -->
 <!-- Seção de Atualizar Status -->
