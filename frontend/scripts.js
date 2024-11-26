@@ -50,7 +50,7 @@ async function listarProjetos() {
 async function preencherListaProjetos() {
   const response = await fetch(API_URL);
   const projetos = await response.json();
-  const select = document.getElementById('projeto-nome');
+  const select = document.getElementById('nome');
 
   select.innerHTML = ''; // Limpa o dropdown
   projetos.forEach(projeto => {
@@ -65,7 +65,7 @@ async function preencherListaProjetos() {
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID do projeto selecionado
+  const projetoId = document.getElementById('nome').value; // Obtém o ID do projeto selecionado
   const novoStatus = document.getElementById('novo-status').value;
   const statusAtual = document.getElementById('status-atual').value;
 
