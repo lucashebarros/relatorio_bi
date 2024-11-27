@@ -96,6 +96,8 @@ document.getElementById('add-project').addEventListener('submit', async (e) => {
   const descricao = document.getElementById('descricao').value;
   const status = document.getElementById('status').value;
   const dataInicio = document.getElementById('data-inicio').value;
+  const statusAtual = document.getElementById('statusAtual').value;
+
 
   await fetch(API_URL, {
     method: 'POST',
