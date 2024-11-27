@@ -30,7 +30,7 @@ async function listarProjetos() {
       <td>${projeto.status}</td>
       <td>${projeto.dataInicio || 'N/A'}</td>
       <td>${projeto.statusAtual || 'N/A'}</td>
-      <td>${projeto.progresso || 0}%</td>
+      <td>${projeto.progresso || 'N/A'}</td>
       <td>
         <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}',  '${projeto.statusAtual || ''}')">Alterar</button>
         <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
