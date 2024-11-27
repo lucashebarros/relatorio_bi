@@ -20,46 +20,43 @@ async function listarProjetos() {
   const response = await fetch(API_URL);
   const projetos = await response.json();
   const table = document.getElementById('projects-table');
-  const chartData = [];
-
   table.innerHTML = ''; // Limpa a tabela
+
   projetos.forEach(projeto => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${projeto.nome}</td>
       <td>${projeto.status}</td>
-      <td>${projeto.dataInicio || 'N/A'}</td>
+      <td>${projeto.prazo || 'N/A'}</td>
       <td>${projeto.statusAtual || 'N/A'}</td>
-      <td>${projeto.progresso || 'N/A'}</td>
       <td>
-        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}',  '${projeto.statusAtual || ''}')">Alterar</button>
+        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}', '${projeto.statusAtual}')">Alterar</button>
         <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
       </td>
     `;
     table.appendChild(row);
-
-    chartData.push({
-      label: projeto.nome,
-      data: projeto.progresso || 0
-    });
-  });
-
-  renderizarGrafico(chartData);
-}
-
-async function preencherListaProjetos() {
-  const response = await fetch(API_URL);
-  const projetos = await response.json();
-  const select = document.getElementById('nome');
-
-  select.innerHTML = ''; // Limpa o dropdown
-  projetos.forEach(projeto => {
-    const option = document.createElement('option');
-    option.value = projeto.id; // O ID do projeto será o valor
-    option.textContent = projeto.nome; // O nome do projeto será exibido
-    select.appendChild(option);
   });
 }
+
+// Função para criar projeto
+document.getElementById('create-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const nome = document.getElementById('nome').value;
+  const status = document.getElementById('status').value;
+  const prazo = document.getElementById('prazo').value;
+  const statusAtual = document.getElementById('status-atual').value;
+
+  await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome, status, prazo, statusAtual })
+  });
+
+  listarProjetos(); // Atualiza a lista
+  showSection('overview'); // Volta para a visão geral
+});
+
 
 // Função para atualizar o status de um projeto
 document.getElementById('update-form').addEventListener('submit', async (e) => {
