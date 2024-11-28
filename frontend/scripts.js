@@ -35,11 +35,16 @@ async function listarProjetos() {
     const projetos = await response.json();
     const table = document.getElementById('projects-table');
     const chartData = []; // Dados para o gráfico
+    const select = document.getElementById('projeto-nome');
+select.innerHTML = ''; // Limpa o select antes de popular
 
-    table.innerHTML = ''; // Limpa a tabela
+projetos.forEach(projeto => {
+    const option = document.createElement('option');
+    option.value = projeto.id;
+    option.textContent = projeto.nome;
+    select.appendChild(option);
+});
 
-    projetos.forEach(projeto => {
-      const progresso = calcularProgresso(projeto.dataInicio); // Calcula o progresso
 
       const row = document.createElement('tr');
       row.innerHTML = `
