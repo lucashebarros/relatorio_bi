@@ -8,61 +8,96 @@ function showSection(sectionId) {
   document.getElementById(sectionId).classList.add('active');
 }
 
-// Configura o formulário de atualização com os dados do projeto
-function setUpdateForm(id, statusAtual) {
-  document.getElementById('projeto-id').value = id;
-  document.getElementById('status-atual').value = statusAtual;
-  document.getElementById('prazo').value = prazo || ''; // Preenche o Prazo
-  showSection('update-status');
+// Carrega os projetos para o campo de seleção em Atualizar Status
+async function carregarProjetosParaSelecao() {
+  try {
+    const response = await fetch(API_URL);
+    const projetos = await response.json();
+
+    const select = document.getElementById('projeto-nome');
+    select.innerHTML = ''; // Limpa o campo antes de preencher
+
+    projetos.forEach(projeto => {
+      const option = document.createElement('option');
+      option.value = projeto.id; // O valor será o ID do projeto
+      option.textContent = projeto.nome; // O texto exibido será o nome do projeto
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Erro ao carregar projetos para seleção:', error);
+  }
+}
+
+// Configura os campos do formulário ao selecionar um projeto no dropdown
+document.getElementById('projeto-nome').addEventListener('change', async (e) => {
+  const projetoId = e.target.value; // Obtém o ID do projeto selecionado
+
+  try {
+    const response = await fetch(`${API_URL}/${projetoId}`);
+    const projeto = await response.json();
+
+    document.getElementById('status-atual').value = projeto.statusAtual || ''; // Preenche Status Atual
+    document.getElementById('prazo').value = projeto.prazo || ''; // Preenche Prazo
+    document.getElementById('projeto-id').value = projetoId; // Armazena o ID no campo oculto
+  } catch (error) {
+    console.error('Erro ao carregar dados do projeto selecionado:', error);
+  }
+});
+
+// Configura o formulário de atualização manualmente (para botão na tabela)
+function setUpdateForm(id, statusAtual, prazo) {
+  document.getElementById('projeto-id').value = id; // Armazena o ID
+  document.getElementById('status-atual').value = statusAtual || ''; // Preenche Status Atual
+  document.getElementById('prazo').value = prazo || ''; // Preenche Prazo
+  carregarProjetosParaSelecao(); // Carrega os projetos para a seleção
+  showSection('update-status'); // Mostra a seção Atualizar Status
 }
 
 // Função para calcular progresso baseado na data de início
 function calcularProgresso(dataInicio, prazo) {
-  if (!dataInicio || !prazo) return 0; // Se faltar alguma data, progresso é 0
+  if (!dataInicio || !prazo) return 0;
 
   const hoje = new Date();
   const inicio = new Date(dataInicio);
   const prazoFinal = new Date(prazo);
 
-  if (hoje < inicio) return 0; // Se hoje está antes do início, progresso é 0
-  if (hoje > prazoFinal) return 100; // Se hoje está após o prazo, progresso é 100
+  if (hoje < inicio) return 0;
+  if (hoje > prazoFinal) return 100;
 
-  const totalDias = (prazoFinal - inicio) / (1000 * 60 * 60 * 24); // Total de dias entre início e prazo
-  const diasPassados = (hoje - inicio) / (1000 * 60 * 60 * 24); // Dias passados desde o início
+  const totalDias = (prazoFinal - inicio) / (1000 * 60 * 60 * 24); // Total de dias
+  const diasPassados = (hoje - inicio) / (1000 * 60 * 60 * 24); // Dias passados
 
   return Math.round((diasPassados / totalDias) * 100); // Progresso em %
 }
 
-
 // Função para listar projetos e atualizar tabela e gráfico
 async function listarProjetos() {
   try {
-    const response = await fetch(API_URL); // Requisição para a API
+    const response = await fetch(API_URL);
     const projetos = await response.json();
     const table = document.getElementById('projects-table');
-    const chartData = []; // Dados para o gráfico
+    const chartData = [];
 
     table.innerHTML = ''; // Limpa a tabela
 
     projetos.forEach(projeto => {
-      const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo); // Novo cálculo de progresso
+      const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
 
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${projeto.nome}</td>
         <td>${projeto.status}</td>
         <td>${projeto.dataInicio || 'N/A'}</td>
+        <td>${projeto.prazo || 'N/A'}</td>
         <td>${projeto.statusAtual || 'N/A'}</td>
-        <td>${projeto.prazo || 'N/A'}</td> <!-- Nova coluna -->
-        <td>${progresso}%</td> <!-- Exibição do progresso -->
+        <td>${progresso}%</td>
         <td>
-          <button onclick="setUpdateForm('${projeto.id}', '${projeto.statusAtual}')">Alterar</button>
+          <button onclick="setUpdateForm('${projeto.id}', '${projeto.statusAtual}', '${projeto.prazo}')">Alterar</button>
           <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
         </td>
       `;
       table.appendChild(row);
 
-      // Prepara os dados para o gráfico
       chartData.push({
         label: projeto.nome,
         data: progresso
@@ -75,17 +110,16 @@ async function listarProjetos() {
   }
 }
 
-
 // Renderiza o gráfico de progresso
 function renderizarGrafico(data) {
   const ctx = document.getElementById('progress-chart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: data.map(d => d.label), // Nomes dos projetos
+      labels: data.map(d => d.label),
       datasets: [{
         label: 'Progresso (%)',
-        data: data.map(d => d.data), // Progresso de cada projeto
+        data: data.map(d => d.data),
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1
@@ -106,43 +140,41 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
   const nome = document.getElementById('nome').value;
   const status = document.getElementById('status').value;
   const dataInicio = document.getElementById('data-inicio').value;
-  const prazo = document.getElementById('prazo').value; // Prazo capturado aqui
+  const prazo = document.getElementById('prazo').value;
   const statusAtual = document.getElementById('status-atual').value;
 
   try {
     await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, status, dataInicio, prazo, statusAtual }) // Enviando o prazo
+      body: JSON.stringify({ nome, status, dataInicio, prazo, statusAtual })
     });
 
-    listarProjetos(); // Atualiza a lista de projetos
-    showSection('overview'); // Volta para a visão geral
+    listarProjetos();
+    showSection('overview');
   } catch (error) {
     console.error('Erro ao criar projeto:', error);
   }
 });
-
 
 // Função para atualizar o status de um projeto
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const projetoId = document.getElementById('projeto-id').value;
-  const novoStatus = document.getElementById('novo-status').value;
   const statusAtual = document.getElementById('status-atual').value;
-  const prazo = document.getElementById('prazo').value; // Novo Prazo
+  const prazo = document.getElementById('prazo').value;
 
   try {
     await fetch(`${API_URL}/${projetoId}`, {
-      method: 'PUT', // Altere para 'PATCH' se o backend suportar PATCH
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: novoStatus, statusAtual })
+      body: JSON.stringify({ statusAtual, prazo })
     });
 
     alert('Status atualizado com sucesso!');
-    listarProjetos(); // Atualiza a lista de projetos
-    showSection('overview'); // Volta para a visão geral
+    listarProjetos();
+    showSection('overview');
   } catch (error) {
     console.error('Erro ao atualizar o status:', error);
   }
@@ -154,7 +186,7 @@ async function deletarProjeto(id) {
     try {
       await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       alert('Projeto excluído com sucesso!');
-      listarProjetos(); // Atualiza a lista de projetos
+      listarProjetos();
     } catch (error) {
       console.error('Erro ao excluir o projeto:', error);
     }
