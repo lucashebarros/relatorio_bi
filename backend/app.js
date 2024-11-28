@@ -78,19 +78,19 @@ app.get('/projetos', async (req, res) => {
 app.post('/projetos', async (req, res) => {
     const { nome, descricao, status, statusAtual, dataInicio } = req.body;
 
-    if (!nome || !descricao || !status || !statusAtual || !dataInicio) {
-        return res.status(400).json({ error: 'Por favor, forneça todos os campos necessários.' });
+    if (!nome || !status) {
+        return res.status(400).json({ error: 'Por favor, forneça pelo menos o nome e o status do projeto.' });
     }
 
-    try {
-        const novoProjeto = { 
-            nome, 
-            descricao, 
-            status, 
-            statusAtual, 
-            dataInicio, 
-            data_criacao: new Date().toISOString() 
-        };
+    const novoProjeto = {
+        nome, 
+        descricao: descricao || '', // Valor padrão vazio
+        status, 
+        statusAtual: statusAtual || '', // Valor padrão vazio
+        dataInicio: dataInicio || null, // Pode ser nulo
+        data_criacao: new Date().toISOString()
+    };
+
         await container.items.create(novoProjeto);
         res.status(201).json({ message: 'Projeto criado com sucesso!' });
     } catch (error) {
