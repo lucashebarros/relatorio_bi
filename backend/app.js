@@ -76,14 +76,21 @@ app.get('/projetos', async (req, res) => {
 
 // Criar Projeto
 app.post('/projetos', async (req, res) => {
-    const { nome, descricao, status, statusAtual } = req.body;
+    const { nome, descricao, status, statusAtual, dataInicio } = req.body;
 
-    if (!nome || !descricao || !status || !statusAtual) {
+    if (!nome || !descricao || !status || !statusAtual || !dataInicio) {
         return res.status(400).json({ error: 'Por favor, forneça todos os campos necessários.' });
     }
 
     try {
-        const novoProjeto = { nome, descricao, status, statusAtual, data_criacao: new Date().toISOString() };
+        const novoProjeto = { 
+            nome, 
+            descricao, 
+            status, 
+            statusAtual, 
+            dataInicio, 
+            data_criacao: new Date().toISOString() 
+        };
         await container.items.create(novoProjeto);
         res.status(201).json({ message: 'Projeto criado com sucesso!' });
     } catch (error) {
@@ -91,6 +98,7 @@ app.post('/projetos', async (req, res) => {
         res.status(500).json({ error: 'Erro ao criar projeto.' });
     }
 });
+
 
 // Atualizar Projeto (PUT)
 app.put('/projetos/:id', async (req, res) => {
