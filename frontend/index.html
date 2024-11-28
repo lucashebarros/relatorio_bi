@@ -26,7 +26,8 @@
         <th>Status</th>
         <th>Data Início</th>
         <th>Status Atual</th>
-        <th>Ações</th>
+        <th>Prazo</th>
+        <th>Progresso</th>
       </tr>
     </thead>
     <tbody id="projects-table">
@@ -43,6 +44,7 @@
     <input type="text" id="nome" placeholder="Nome do Projeto" required>
     <select id="status" required>
       <option value="Em andamento">Em andamento</option>
+      <option value="Em finalização">Em finalização</option>
       <option value="Concluído">Concluído</option>
       <option value="Parado">Parado</option>
     </select>
@@ -65,6 +67,7 @@
     <label for="novo-status">Novo Status:</label>
     <select id="novo-status" required>
       <option value="Em andamento">Em andamento</option>
+      <option value="Em finalização">Em finalização</option>
       <option value="Concluído">Concluído</option>
       <option value="Parado">Parado</option>
     </select>
