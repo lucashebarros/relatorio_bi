@@ -15,7 +15,7 @@ async function carregarProjetosParaSelecao() {
     if (!response.ok) throw new Error('Erro ao carregar projetos');
     const projetos = await response.json();
 
-    const select = document.getElementById('projeto-nome'); // Seleciona o dropdown
+    const select = document.getElementById('nome'); // Seleciona o dropdown
     select.innerHTML = ''; // Limpa o campo antes de preencher
 
     // Adiciona uma opção inicial ao dropdown
