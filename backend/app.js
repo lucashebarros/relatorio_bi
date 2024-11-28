@@ -123,6 +123,37 @@ app.put('/projetos/:id', async (req, res) => {
     }
 });
 
+app.patch('/projetos/:id', async (req, res) => {
+    const { id } = req.params;
+    const { statusAtual, prazo } = req.body;
+
+    if (!statusAtual && !prazo) {
+        return res.status(400).json({ error: 'Por favor, forneça pelo menos um campo para atualizar.' });
+    }
+
+    try {
+        // Busca o projeto existente
+        const { resource: projeto } = await container.item(id, id).read();
+
+        // Atualiza apenas os campos fornecidos
+        const projetoAtualizado = {
+            ...projeto,
+            statusAtual: statusAtual || projeto.statusAtual,
+            prazo: prazo || projeto.prazo,
+            data_atualizacao: new Date().toISOString()
+        };
+
+        // Salva o projeto atualizado no banco
+        await container.item(id, id).replace(projetoAtualizado);
+
+        res.status(200).json({ message: 'Projeto atualizado com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao atualizar projeto.' });
+    }
+});
+
+
 // Deletar Projeto
 app.delete('/projetos/:id', async (req, res) => {
     const { id } = req.params;
