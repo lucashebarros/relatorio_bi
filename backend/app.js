@@ -2,20 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const { CosmosClient } = require('@azure/cosmos');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const cors = require('cors');
-
-// Configuração do CORS
+// Middleware CORS (restaurado)
 app.use(cors({
-  origin: 'https://happy-water-0a753eale.5.azurestaticapps.net', // Substitua pelo domínio do frontend
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
-  credentials: true // Permite envio de cookies (se necessário)
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type']
 }));
-
 
 // Configuração do Cosmos DB
 const client = new CosmosClient({
@@ -31,37 +28,6 @@ app.use(bodyParser.json());
 // Rotas
 app.get('/', (req, res) => {
     res.send('API Backend funcionando!');
-});
-
-// Login (exemplo)
-app.post('/login', async (req, res) => {
-    const { usuario, senha } = req.body;
-
-    if (!usuario || !senha) {
-        return res.status(400).json({ error: 'Por favor, forneça usuário e senha.' });
-    }
-
-    try {
-        const query = `SELECT * FROM c WHERE c.usuario = @usuario AND c.senha = @senha`;
-        const { resources } = await container.items
-            .query({
-                query,
-                parameters: [
-                    { name: '@usuario', value: usuario },
-                    { name: '@senha', value: senha }
-                ]
-            })
-            .fetchAll();
-
-        if (resources.length > 0) {
-            res.status(200).json({ message: 'Login realizado com sucesso!' });
-        } else {
-            res.status(401).json({ error: 'Usuário ou senha inválidos.' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erro ao acessar o banco de dados.' });
-    }
 });
 
 // Listar Projetos
@@ -83,14 +49,15 @@ app.post('/projetos', async (req, res) => {
         return res.status(400).json({ error: 'Por favor, forneça pelo menos o nome e o status do projeto.' });
     }
 
-    const novoProjeto = {
-        nome, 
-        descricao: descricao || '', // Valor padrão vazio
-        status, 
-        statusAtual: statusAtual || '', // Valor padrão vazio
-        dataInicio: dataInicio || null, // Pode ser nulo
-        data_criacao: new Date().toISOString()
-    };
+    try {
+        const novoProjeto = {
+            nome,
+            descricao: descricao || '',
+            status,
+            statusAtual: statusAtual || '',
+            dataInicio: dataInicio || null,
+            data_criacao: new Date().toISOString()
+        };
 
         await container.items.create(novoProjeto);
         res.status(201).json({ message: 'Projeto criado com sucesso!' });
@@ -100,43 +67,25 @@ app.post('/projetos', async (req, res) => {
     }
 });
 
-app.patch('/projetos/:id', async (req, res) => {
-    const { id } = req.params;
-    const { status, statusAtual } = req.body;
-
-    if (!status) {
-        return res.status(400).json({ error: 'O campo status é obrigatório.' });
-    }
-
-    try {
-        const projeto = await container.item(id).read();
-        const projetoAtualizado = {
-            ...projeto.resource,
-            status,
-            statusAtual: statusAtual || projeto.resource.statusAtual,
-            data_atualizacao: new Date().toISOString()
-        };
-
-        await container.item(id).replace(projetoAtualizado);
-        res.status(200).json({ message: 'Projeto atualizado com sucesso!' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erro ao atualizar projeto.' });
-    }
-});
-
-
 // Atualizar Projeto (PUT)
 app.put('/projetos/:id', async (req, res) => {
     const { id } = req.params;
-    const { nome, descricao, status, statusAtual  } = req.body;
+    const { nome, descricao, status, statusAtual } = req.body;
 
     if (!nome || !descricao || !status) {
         return res.status(400).json({ error: 'Por favor, forneça todos os campos necessários.' });
     }
 
     try {
-        const projetoAtualizado = { id, nome, descricao, status, statusAtual , data_atualizacao: new Date().toISOString() };
+        const projetoAtualizado = {
+            id,
+            nome,
+            descricao,
+            status,
+            statusAtual,
+            data_atualizacao: new Date().toISOString()
+        };
+
         await container.item(id, id).replace(projetoAtualizado);
         res.status(200).json({ message: 'Projeto atualizado com sucesso!' });
     } catch (error) {
@@ -145,7 +94,7 @@ app.put('/projetos/:id', async (req, res) => {
     }
 });
 
-// Deletar Projeto (DELETE)
+// Deletar Projeto
 app.delete('/projetos/:id', async (req, res) => {
     const { id } = req.params;
 
