@@ -104,7 +104,7 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
 
   const nome = document.getElementById('nome').value;
   const status = document.getElementById('status').value;
-  const dataInicio = document.getElementById('prazo').value;
+  const dataInicio = document.getElementById('dataInicio').value;
   const prazo = document.getElementById('prazo').value; // Prazo capturado aqui
   const statusAtual = document.getElementById('status-atual').value;
 
