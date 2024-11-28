@@ -35,16 +35,11 @@ async function listarProjetos() {
     const projetos = await response.json();
     const table = document.getElementById('projects-table');
     const chartData = []; // Dados para o gráfico
-    const select = document.getElementById('projeto-nome');
-select.innerHTML = ''; // Limpa o select antes de popular
 
-projetos.forEach(projeto => {
-    const option = document.createElement('option');
-    option.value = projeto.id;
-    option.textContent = projeto.nome;
-    select.appendChild(option);
-});
+    table.innerHTML = ''; // Limpa a tabela
 
+    projetos.forEach(projeto => {
+      const progresso = calcularProgresso(projeto.dataInicio); // Calcula o progresso
 
       const row = document.createElement('tr');
       row.innerHTML = `
@@ -65,6 +60,7 @@ projetos.forEach(projeto => {
         label: projeto.nome,
         data: progresso
       });
+    });
 
     renderizarGrafico(chartData); // Atualiza o gráfico
   } catch (error) {
@@ -128,7 +124,7 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
 
   try {
     await fetch(`${API_URL}/${projetoId}`, {
-      method: 'PATCH',
+      method: 'PUT', // Altere para 'PATCH' se o backend suportar PATCH
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: novoStatus, statusAtual })
     });
