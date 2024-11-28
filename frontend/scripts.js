@@ -37,23 +37,11 @@ async function carregarProjetosParaSelecao() {
   }
 }
 
-// Preenche os campos ao selecionar um projeto no dropdown
-document.getElementById('projeto-nome').addEventListener('change', async (e) => {
-  const projetoId = e.target.value; // Obtém o ID do projeto selecionado
-
-  try {
-    // Faz uma requisição para obter os detalhes do projeto selecionado
-    const response = await fetch(`${API_URL}/${projetoId}`);
-    const projeto = await response.json();
-
-    // Preenche os campos do formulário com os dados do projeto
-    document.getElementById('status-atual').value = projeto.statusAtual || '';
-    document.getElementById('prazo').value = projeto.prazo || '';
-    document.getElementById('projeto-id').value = projetoId; // Armazena o ID no campo oculto
-  } catch (error) {
-    console.error('Erro ao carregar dados do projeto selecionado:', error);
-  }
-});
+// Configura o formulário de atualização manualmente
+function setUpdateForm() {
+  carregarProjetosParaSelecao(); // Carrega os projetos no dropdown
+  showSection('update-status'); // Mostra a seção Atualizar Status
+}
 
 // Função para calcular progresso baseado na data de início
 function calcularProgresso(dataInicio, prazo) {
@@ -94,7 +82,7 @@ async function listarProjetos() {
         <td>${projeto.statusAtual || 'N/A'}</td>
         <td>${progresso}%</td>
         <td>
-          <button onclick="setUpdateForm('${projeto.id}', '${projeto.statusAtual}', '${projeto.prazo}')">Alterar</button>
+          <button onclick="setUpdateForm()">Alterar</button>
           <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
         </td>
       `;
@@ -163,9 +151,14 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const projetoId = document.getElementById('projeto-id').value;
+  const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID selecionado
   const statusAtual = document.getElementById('status-atual').value;
   const prazo = document.getElementById('prazo').value;
+
+  if (!projetoId) {
+    alert('Por favor, selecione um projeto!');
+    return;
+  }
 
   try {
     await fetch(`${API_URL}/${projetoId}`, {
@@ -198,6 +191,5 @@ async function deletarProjeto(id) {
 // Carrega projetos ao inicializar
 document.addEventListener('DOMContentLoaded', () => {
   listarProjetos();
-  carregarProjetosParaSelecao(); // Garante que o dropdown é populado ao carregar
-  showSection('overview');
+  showSection('overview'); // Abre a visão geral
 });
