@@ -8,6 +8,13 @@ function showSection(sectionId) {
   document.getElementById(sectionId).classList.add('active');
 }
 
+// Configura o formulário de atualização com os dados do projeto
+function setUpdateForm(id, statusAtual) {
+  document.getElementById('projeto-id').value = id;
+  document.getElementById('status-atual').value = statusAtual;
+  showSection('update-status');
+}
+
 // Função para calcular progresso baseado na data de início
 function calcularProgresso(dataInicio) {
   if (!dataInicio) return 0;
@@ -21,41 +28,44 @@ function calcularProgresso(dataInicio) {
   return progresso > 100 ? 100 : progresso;
 }
 
-// Função para listar projetos
+// Função para listar projetos e atualizar tabela e gráfico
 async function listarProjetos() {
-  const response = await fetch(API_URL); // Requisição para a API
-  const projetos = await response.json();
-  const table = document.getElementById('projects-table');
-  const chartData = []; // Dados para o gráfico
+  try {
+    const response = await fetch(API_URL); // Requisição para a API
+    const projetos = await response.json();
+    const table = document.getElementById('projects-table');
+    const chartData = []; // Dados para o gráfico
 
-  table.innerHTML = ''; // Limpa a tabela antes de popular
+    table.innerHTML = ''; // Limpa a tabela
 
-  projetos.forEach(projeto => {
-    const progresso = calcularProgresso(projeto.dataInicio); // Calcula o progresso baseado na data de início
+    projetos.forEach(projeto => {
+      const progresso = calcularProgresso(projeto.dataInicio); // Calcula o progresso
 
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${projeto.nome}</td>
-      <td>${projeto.status}</td>
-      <td>${projeto.dataInicio || 'N/A'}</td>
-      <td>${projeto.statusAtual || 'N/A'}</td>
-      <td>${progresso}%</td> <!-- Progresso calculado -->
-      <td>
-        <button onclick="setUpdateForm('${projeto.id}', '${projeto.status}')">Alterar</button>
-        <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
-      </td>
-    `;
-    table.appendChild(row);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${projeto.nome}</td>
+        <td>${projeto.status}</td>
+        <td>${projeto.dataInicio || 'N/A'}</td>
+        <td>${projeto.statusAtual || 'N/A'}</td>
+        <td>${progresso}%</td>
+        <td>
+          <button onclick="setUpdateForm('${projeto.id}', '${projeto.statusAtual}')">Alterar</button>
+          <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
+        </td>
+      `;
+      table.appendChild(row);
 
-    // Prepara os dados para o gráfico
-    chartData.push({
-      label: projeto.nome,
-      data: progresso
+      // Prepara os dados para o gráfico
+      chartData.push({
+        label: projeto.nome,
+        data: progresso
+      });
     });
-  });
 
-  // Chama a função para renderizar o gráfico
-  renderizarGrafico(chartData);
+    renderizarGrafico(chartData); // Atualiza o gráfico
+  } catch (error) {
+    console.error('Erro ao listar projetos:', error);
+  }
 }
 
 // Renderiza o gráfico de progresso
@@ -87,24 +97,28 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
 
   const nome = document.getElementById('nome').value;
   const status = document.getElementById('status').value;
-  const dataInicio = document.getElementById('prazo').value; // Data de início vem do input com ID 'prazo'
+  const dataInicio = document.getElementById('prazo').value;
   const statusAtual = document.getElementById('status-atual').value;
 
-  await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, status, dataInicio, statusAtual })
-  });
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, status, dataInicio, statusAtual })
+    });
 
-  listarProjetos(); // Atualiza a lista de projetos
-  showSection('overview'); // Volta para a visão geral
+    listarProjetos(); // Atualiza a lista de projetos
+    showSection('overview'); // Volta para a visão geral
+  } catch (error) {
+    console.error('Erro ao criar projeto:', error);
+  }
 });
 
 // Função para atualizar o status de um projeto
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const projetoId = document.getElementById('projeto-id').value; // Obtém o ID do projeto selecionado
+  const projetoId = document.getElementById('projeto-id').value;
   const novoStatus = document.getElementById('novo-status').value;
   const statusAtual = document.getElementById('status-atual').value;
 
@@ -114,12 +128,12 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: novoStatus, statusAtual })
     });
+
     alert('Status atualizado com sucesso!');
     listarProjetos(); // Atualiza a lista de projetos
     showSection('overview'); // Volta para a visão geral
   } catch (error) {
     console.error('Erro ao atualizar o status:', error);
-    alert('Erro ao atualizar o status. Tente novamente mais tarde.');
   }
 });
 
@@ -132,20 +146,12 @@ async function deletarProjeto(id) {
       listarProjetos(); // Atualiza a lista de projetos
     } catch (error) {
       console.error('Erro ao excluir o projeto:', error);
-      alert('Erro ao excluir o projeto. Tente novamente mais tarde.');
     }
   }
 }
 
-// Função para configurar o formulário de atualização
-function setUpdateForm(id, statusAtual) {
-  document.getElementById('projeto-id').value = id;
-  document.getElementById('status-atual').value = statusAtual;
-  showSection('update-status');
-}
-
-// Garante que os projetos sejam carregados ao carregar a página
+// Carrega projetos ao inicializar
 document.addEventListener('DOMContentLoaded', () => {
-  listarProjetos(); // Lista os projetos e carrega o gráfico
-  showSection('overview'); // Abre a seção de visão geral
+  listarProjetos();
+  showSection('overview'); // Abre a visão geral
 });
