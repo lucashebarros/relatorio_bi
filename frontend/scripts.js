@@ -11,16 +11,25 @@ function showSection(sectionId) {
 // Carrega os projetos para o campo de seleção em Atualizar Status
 async function carregarProjetosParaSelecao() {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_URL); // Faz a requisição para a API
     const projetos = await response.json();
 
-    const select = document.getElementById('projeto-nome');
+    const select = document.getElementById('projeto-nome'); // Seleciona o dropdown
     select.innerHTML = ''; // Limpa o campo antes de preencher
 
+    // Adiciona uma opção inicial ao dropdown
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Selecione um projeto';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    select.appendChild(defaultOption);
+
+    // Preenche os projetos no dropdown
     projetos.forEach(projeto => {
       const option = document.createElement('option');
-      option.value = projeto.id; // O valor será o ID do projeto
-      option.textContent = projeto.nome; // O texto exibido será o nome do projeto
+      option.value = projeto.id; // Define o valor como o ID do projeto
+      option.textContent = projeto.nome; // Define o texto como o nome do projeto
       select.appendChild(option);
     });
   } catch (error) {
@@ -28,30 +37,23 @@ async function carregarProjetosParaSelecao() {
   }
 }
 
-// Configura os campos do formulário ao selecionar um projeto no dropdown
+// Preenche os campos ao selecionar um projeto no dropdown
 document.getElementById('projeto-nome').addEventListener('change', async (e) => {
   const projetoId = e.target.value; // Obtém o ID do projeto selecionado
 
   try {
+    // Faz uma requisição para obter os detalhes do projeto selecionado
     const response = await fetch(`${API_URL}/${projetoId}`);
     const projeto = await response.json();
 
-    document.getElementById('status-atual').value = projeto.statusAtual || ''; // Preenche Status Atual
-    document.getElementById('prazo').value = projeto.prazo || ''; // Preenche Prazo
+    // Preenche os campos do formulário com os dados do projeto
+    document.getElementById('status-atual').value = projeto.statusAtual || '';
+    document.getElementById('prazo').value = projeto.prazo || '';
     document.getElementById('projeto-id').value = projetoId; // Armazena o ID no campo oculto
   } catch (error) {
     console.error('Erro ao carregar dados do projeto selecionado:', error);
   }
 });
-
-// Configura o formulário de atualização manualmente (para botão na tabela)
-function setUpdateForm(id, statusAtual, prazo) {
-  document.getElementById('projeto-id').value = id; // Armazena o ID
-  document.getElementById('status-atual').value = statusAtual || ''; // Preenche Status Atual
-  document.getElementById('prazo').value = prazo || ''; // Preenche Prazo
-  carregarProjetosParaSelecao(); // Carrega os projetos para a seleção
-  showSection('update-status'); // Mostra a seção Atualizar Status
-}
 
 // Função para calcular progresso baseado na data de início
 function calcularProgresso(dataInicio, prazo) {
@@ -196,5 +198,6 @@ async function deletarProjeto(id) {
 // Carrega projetos ao inicializar
 document.addEventListener('DOMContentLoaded', () => {
   listarProjetos();
-  showSection('overview'); // Abre a visão geral
+  carregarProjetosParaSelecao(); // Garante que o dropdown é populado ao carregar
+  showSection('overview');
 });
