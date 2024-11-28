@@ -8,10 +8,11 @@ function showSection(sectionId) {
   document.getElementById(sectionId).classList.add('active');
 }
 
-// Carrega os projetos para o campo de seleção em Atualizar Status
+// Carrega os projetos para o campo de seleção no Atualizar Status
 async function carregarProjetosParaSelecao() {
   try {
     const response = await fetch(API_URL); // Faz a requisição para a API
+    if (!response.ok) throw new Error('Erro ao carregar projetos');
     const projetos = await response.json();
 
     const select = document.getElementById('projeto-nome'); // Seleciona o dropdown
@@ -34,13 +35,8 @@ async function carregarProjetosParaSelecao() {
     });
   } catch (error) {
     console.error('Erro ao carregar projetos para seleção:', error);
+    alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
   }
-}
-
-// Configura o formulário de atualização manualmente
-function setUpdateForm() {
-  carregarProjetosParaSelecao(); // Carrega os projetos no dropdown
-  showSection('update-status'); // Mostra a seção Atualizar Status
 }
 
 // Função para calcular progresso baseado na data de início
@@ -64,6 +60,7 @@ function calcularProgresso(dataInicio, prazo) {
 async function listarProjetos() {
   try {
     const response = await fetch(API_URL);
+    if (!response.ok) throw new Error('Erro ao listar projetos');
     const projetos = await response.json();
     const table = document.getElementById('projects-table');
     const chartData = [];
@@ -82,7 +79,7 @@ async function listarProjetos() {
         <td>${projeto.statusAtual || 'N/A'}</td>
         <td>${progresso}%</td>
         <td>
-          <button onclick="setUpdateForm()">Alterar</button>
+          <button onclick="abrirAtualizarStatus()">Alterar</button>
           <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
         </td>
       `;
@@ -174,6 +171,12 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
     console.error('Erro ao atualizar o status:', error);
   }
 });
+
+// Abre a seção Atualizar Status
+function abrirAtualizarStatus() {
+  carregarProjetosParaSelecao(); // Preenche o dropdown
+  showSection('update-status'); // Mostra a seção Atualizar Status
+}
 
 // Função para deletar projeto
 async function deletarProjeto(id) {
