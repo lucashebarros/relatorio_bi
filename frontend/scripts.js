@@ -86,9 +86,6 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
   }
 });
 
-// Atualiza a lista suspensa ao carregar a página ou mudar para a seção de atualização
-document.addEventListener('DOMContentLoaded', preencherListaProjetos);
-document.querySelector('button[onclick="showSection(\'update-status\')"]').addEventListener('click', preencherListaProjetos);
 
 // Função para criar projeto
 document.getElementById('add-project').addEventListener('submit', async (e) => {
