@@ -8,11 +8,12 @@ const port = process.env.PORT || 3000;
 
 const cors = require('cors');
 
-// Habilitar CORS
+// Configuração do CORS
 app.use(cors({
-    origin: '*', // Permite todas as origens. Ajuste isso para maior segurança.
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+  origin: 'https://happy-water-0a753eale.5.azurestaticapps.net', // Substitua pelo domínio do frontend
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+  credentials: true // Permite envio de cookies (se necessário)
 }));
 
 
