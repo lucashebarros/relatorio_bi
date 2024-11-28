@@ -43,7 +43,7 @@ app.get('/projetos', async (req, res) => {
 
 // Criar Projeto
 app.post('/projetos', async (req, res) => {
-    const { nome, descricao, status, statusAtual, dataInicio } = req.body;
+    const { nome, descricao, status, statusAtual, dataInicio, prazo } = req.body;
 
     if (!nome || !status) {
         return res.status(400).json({ error: 'Por favor, forneça pelo menos o nome e o status do projeto.' });
@@ -56,6 +56,7 @@ app.post('/projetos', async (req, res) => {
             status,
             statusAtual: statusAtual || '',
             dataInicio: dataInicio || null,
+            prazo: prazo || null, // Armazena o prazo
             data_criacao: new Date().toISOString()
         };
 
@@ -66,6 +67,7 @@ app.post('/projetos', async (req, res) => {
         res.status(500).json({ error: 'Erro ao criar projeto.' });
     }
 });
+
 
 // Atualizar Projeto (PUT)
 app.put('/projetos/:id', async (req, res) => {
