@@ -51,8 +51,8 @@ async function listarProjetos() {
         <td>${projeto.nome}</td>
         <td>${projeto.status}</td>
         <td>${projeto.dataInicio || 'N/A'}</td>
-        <td>${projeto.prazo || 'N/A'}</td> <!-- Nova coluna -->
         <td>${projeto.statusAtual || 'N/A'}</td>
+        <td>${projeto.prazo || 'N/A'}</td> <!-- Nova coluna -->
         <td>${progresso}%</td> <!-- Exibição do progresso -->
         <td>
           <button onclick="setUpdateForm('${projeto.id}', '${projeto.statusAtual}')">Alterar</button>
