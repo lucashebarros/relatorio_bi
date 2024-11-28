@@ -37,6 +37,11 @@ async function listarProjetos() {
     table.appendChild(row);
   });
 }
+// Garantir que os projetos sejam carregados ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+  listarProjetos();
+  showSection('overview'); // Abre a visão geral ao carregar
+});
 
 // Função para criar projeto
 document.getElementById('create-form').addEventListener('submit', async (e) => {
