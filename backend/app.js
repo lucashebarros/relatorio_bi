@@ -100,6 +100,31 @@ app.post('/projetos', async (req, res) => {
     }
 });
 
+app.patch('/projetos/:id', async (req, res) => {
+    const { id } = req.params;
+    const { status, statusAtual } = req.body;
+
+    if (!status) {
+        return res.status(400).json({ error: 'O campo status é obrigatório.' });
+    }
+
+    try {
+        const projeto = await container.item(id).read();
+        const projetoAtualizado = {
+            ...projeto.resource,
+            status,
+            statusAtual: statusAtual || projeto.resource.statusAtual,
+            data_atualizacao: new Date().toISOString()
+        };
+
+        await container.item(id).replace(projetoAtualizado);
+        res.status(200).json({ message: 'Projeto atualizado com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao atualizar projeto.' });
+    }
+});
+
 
 // Atualizar Projeto (PUT)
 app.put('/projetos/:id', async (req, res) => {
