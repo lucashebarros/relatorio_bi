@@ -65,7 +65,6 @@ projetos.forEach(projeto => {
         label: projeto.nome,
         data: progresso
       });
-    });
 
     renderizarGrafico(chartData); // Atualiza o gráfico
   } catch (error) {
