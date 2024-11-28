@@ -12,6 +12,7 @@ function showSection(sectionId) {
 function setUpdateForm(id, statusAtual) {
   document.getElementById('projeto-id').value = id;
   document.getElementById('status-atual').value = statusAtual;
+  document.getElementById('prazo').value = prazo || ''; // Preenche o Prazo
   showSection('update-status');
 }
 
@@ -130,6 +131,7 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
   const projetoId = document.getElementById('projeto-id').value;
   const novoStatus = document.getElementById('novo-status').value;
   const statusAtual = document.getElementById('status-atual').value;
+  const prazo = document.getElementById('prazo').value; // Novo Prazo
 
   try {
     await fetch(`${API_URL}/${projetoId}`, {
