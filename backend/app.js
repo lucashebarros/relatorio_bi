@@ -48,6 +48,28 @@ app.get('/', (req, res) => {
     res.send('API Backend funcionando!');
 });
 
+// Rota para retornar apenas nomes e IDs de projetos
+app.get('/projetos/names', async (req, res) => {
+    try {
+        // Usa o cache se disponível
+        if (cacheProjetos) {
+            console.log('Servindo nomes dos projetos a partir do cache.');
+            const nomes = cacheProjetos.map(p => ({ id: p.id, nome: p.nome }));
+            return res.status(200).json(nomes);
+        }
+
+        console.log('Consultando o banco para nomes dos projetos.');
+        const { resources: projetos } = await container.items.readAll().fetchAll();
+        cacheProjetos = projetos; // Atualiza o cache
+        const nomes = projetos.map(p => ({ id: p.id, nome: p.nome })); // Retorna apenas IDs e nomes
+        res.status(200).json(nomes);
+    } catch (error) {
+        console.error('Erro ao listar nomes de projetos:', error);
+        res.status(500).json({ error: 'Erro ao listar nomes de projetos.' });
+    }
+});
+
+
 // Listar Projetos (usando cache)
 app.get('/projetos', async (req, res) => {
     try {
