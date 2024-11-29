@@ -171,11 +171,11 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID selecionado
+  const nome = document.getElementById('nome').value; // Obtém o ID selecionado
   const statusAtual = document.getElementById('status-atual').value;
   const prazo = document.getElementById('prazo').value;
 
-  if (!projetoId) {
+  if (!nome) {
     alert('Por favor, selecione um projeto!');
     return;
   }
