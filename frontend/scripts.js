@@ -11,32 +11,38 @@ function showSection(sectionId) {
 
 // Carrega os projetos para o campo de seleção no Atualizar Status
 async function carregarProjetosParaSelecao() {
-  try {
-    console.log('Iniciando carregamento dos projetos para o dropdown...');
-    
-    // Usa o cache local se disponível
-    if (projetosCache) {
-      console.log('Usando cache local:', projetosCache);
-      preencherDropdown(projetosCache);
-      return;
-    }
+    try {
+        console.log('Iniciando carregamento dos projetos para o dropdown...');
+        
+        if (projetosCache) {
+            console.log('Usando cache local:', projetosCache);
+            preencherDropdown(projetosCache);
+            return;
+        }
 
-    console.log('Buscando nomes dos projetos do backend...');
-    const response = await fetch(`${API_URL}/names`); // Chama a rota otimizada para nomes
-    
-    if (!response.ok) {
-      console.error('Erro na resposta do backend:', response.status, response.statusText);
-      throw new Error('Erro ao carregar projetos');
-    }
+        const response = await fetch(`${API_URL}/names`);
+        if (!response.ok) {
+            console.error('Erro na resposta do backend:', response.status, response.statusText);
+            throw new Error('Erro ao carregar projetos');
+        }
 
-    const projetos = await response.json();
-    console.log('Projetos retornados pelo backend:', projetos);
+        const projetos = await response.json();
+        console.log('Projetos retornados pelo backend:', projetos);
 
-    if (!Array.isArray(projetos) || projetos.length === 0) {
-      console.warn('Nenhum projeto encontrado ou formato inválido:', projetos);
-      preencherDropdown([]);
-      return;
+        if (!Array.isArray(projetos) || projetos.length === 0) {
+            console.warn('Nenhum projeto encontrado ou formato inválido:', projetos);
+            preencherDropdown([]);
+            return;
+        }
+
+        projetosCache = projetos;
+        preencherDropdown(projetos);
+    } catch (error) {
+        console.error('Erro ao carregar projetos para seleção:', error);
+        alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
     }
+}
+
 
     projetosCache = projetos; // Armazena no cache local
     preencherDropdown(projetos);
@@ -119,30 +125,31 @@ async function listarProjetos() {
 
 // Renderiza a tabela de projetos
 function renderizarTabela(projetos) {
-  const table = document.getElementById('projects-table');
-  table.innerHTML = ''; // Limpa a tabela
+    const table = document.getElementById('projects-table');
+    table.innerHTML = ''; // Limpa a tabela
 
-  projetos.forEach(projeto => {
-    const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
+    projetos.forEach(projeto => {
+        const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
 
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${projeto.nome}</td>
-      <td>${projeto.status}</td>
-      <td>${projeto.dataInicio || 'N/A'}</td>
-      <td>${projeto.prazo || 'N/A'}</td>
-      <td>${projeto.statusAtual || 'N/A'}</td>
-      <td>${progresso}%</td>
-      <td>
-        <button onclick="abrirAtualizarStatus()">Alterar</button>
-        <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
-      </td>
-    `;
-    table.appendChild(row);
-  });
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${projeto.nome}</td>
+            <td>${projeto.status}</td>
+            <td>${projeto.dataInicio || 'N/A'}</td>
+            <td>${projeto.statusAtual || 'N/A'}</td>
+            <td>${projeto.prazo || 'N/A'}</td>
+            <td>${progresso}%</td>
+            <td>
+                <button onclick="abrirAtualizarStatus()">Alterar</button>
+                <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
+            </td>
+        `;
+        table.appendChild(row);
+    });
 
-  renderizarGrafico(projetos);
+    renderizarGrafico(projetos);
 }
+
 
 // Renderiza o gráfico de progresso
 function renderizarGrafico(projetos) {
