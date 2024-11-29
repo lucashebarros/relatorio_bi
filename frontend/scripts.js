@@ -44,15 +44,6 @@ async function carregarProjetosParaSelecao() {
 }
 
 
-    projetosCache = projetos; // Armazena no cache local
-    preencherDropdown(projetos);
-  } catch (error) {
-    console.error('Erro ao carregar projetos para seleção:', error);
-    alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
-  }
-}
-
-
 // Preenche o dropdown com os projetos
 function preencherDropdown(projetos) {
   const select = document.getElementById('projeto-nome');
