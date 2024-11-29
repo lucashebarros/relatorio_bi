@@ -11,53 +11,42 @@ function showSection(sectionId) {
 
 // Carrega os projetos para o campo de seleção no Atualizar Status
 async function carregarProjetosParaSelecao() {
-    try {
-        console.log('Iniciando carregamento dos projetos para o dropdown...');
-        
-        if (projetosCache) {
-            console.log('Usando cache local:', projetosCache);
-            preencherDropdown(projetosCache);
-            return;
-        }
-
-        const response = await fetch(`${API_URL}/names`);
-        if (!response.ok) {
-            console.error('Erro na resposta do backend:', response.status, response.statusText);
-            throw new Error('Erro ao carregar projetos');
-        }
-
-        const projetos = await response.json();
-        console.log('Projetos retornados pelo backend:', projetos);
-
-        if (!Array.isArray(projetos) || projetos.length === 0) {
-            console.warn('Nenhum projeto encontrado ou formato inválido:', projetos);
-            preencherDropdown([]);
-            return;
-        }
-
-        projetosCache = projetos;
-        preencherDropdown(projetos);
-    } catch (error) {
-        console.error('Erro ao carregar projetos para seleção:', error);
-        alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
+  try {
+    console.log('Iniciando carregamento dos projetos para o dropdown...');
+    
+    if (projetosCache) {
+      console.log('Usando cache local:', projetosCache);
+      preencherDropdown(projetosCache);
+      return;
     }
-}
 
+    const response = await fetch(`${API_URL}/names`);
+    if (!response.ok) {
+      console.error('Erro na resposta do backend:', response.status, response.statusText);
+      throw new Error('Erro ao carregar projetos');
+    }
+
+    const projetos = await response.json();
+    console.log('Projetos retornados pelo backend:', projetos);
+
+    if (!Array.isArray(projetos) || projetos.length === 0) {
+      console.warn('Nenhum projeto encontrado ou formato inválido:', projetos);
+      preencherDropdown([]);
+      return;
+    }
+
+    projetosCache = projetos; // Armazena no cache local
+    preencherDropdown(projetos);
+  } catch (error) {
+    console.error('Erro ao carregar projetos para seleção:', error);
+    alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
+  }
+}
 
 // Preenche o dropdown com os projetos
 function preencherDropdown(projetos) {
   const select = document.getElementById('projeto-nome');
   select.innerHTML = ''; // Limpa o campo antes de preencher
-
-  if (!projetos || projetos.length === 0) {
-    const noProjectsOption = document.createElement('option');
-    noProjectsOption.value = '';
-    noProjectsOption.textContent = 'Nenhum projeto disponível';
-    noProjectsOption.disabled = true;
-    noProjectsOption.selected = true;
-    select.appendChild(noProjectsOption);
-    return;
-  }
 
   const defaultOption = document.createElement('option');
   defaultOption.value = '';
@@ -65,6 +54,15 @@ function preencherDropdown(projetos) {
   defaultOption.disabled = true;
   defaultOption.selected = true;
   select.appendChild(defaultOption);
+
+  if (!projetos || projetos.length === 0) {
+    const noProjectsOption = document.createElement('option');
+    noProjectsOption.value = '';
+    noProjectsOption.textContent = 'Nenhum projeto disponível';
+    noProjectsOption.disabled = true;
+    select.appendChild(noProjectsOption);
+    return;
+  }
 
   projetos.forEach(projeto => {
     const option = document.createElement('option');
@@ -75,7 +73,6 @@ function preencherDropdown(projetos) {
 
   console.log('Dropdown preenchido com sucesso:', select.innerHTML);
 }
-
 
 // Calcula o progresso com base nas datas
 function calcularProgresso(dataInicio, prazo) {
@@ -116,31 +113,30 @@ async function listarProjetos() {
 
 // Renderiza a tabela de projetos
 function renderizarTabela(projetos) {
-    const table = document.getElementById('projects-table');
-    table.innerHTML = ''; // Limpa a tabela
+  const table = document.getElementById('projects-table');
+  table.innerHTML = ''; // Limpa a tabela
 
-    projetos.forEach(projeto => {
-        const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
+  projetos.forEach(projeto => {
+    const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${projeto.nome}</td>
-            <td>${projeto.status}</td>
-            <td>${projeto.dataInicio || 'N/A'}</td>
-            <td>${projeto.statusAtual || 'N/A'}</td>
-            <td>${projeto.prazo || 'N/A'}</td>
-            <td>${progresso}%</td>
-            <td>
-                <button onclick="abrirAtualizarStatus()">Alterar</button>
-                <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
-            </td>
-        `;
-        table.appendChild(row);
-    });
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${projeto.nome}</td>
+      <td>${projeto.status}</td>
+      <td>${projeto.dataInicio || 'N/A'}</td>
+      <td>${projeto.statusAtual || 'N/A'}</td>
+      <td>${projeto.prazo || 'N/A'}</td>
+      <td>${progresso}%</td>
+      <td>
+        <button onclick="abrirAtualizarStatus()">Alterar</button>
+        <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
 
-    renderizarGrafico(projetos);
+  renderizarGrafico(projetos);
 }
-
 
 // Renderiza o gráfico de progresso
 function renderizarGrafico(projetos) {
