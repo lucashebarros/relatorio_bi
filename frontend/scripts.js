@@ -12,16 +12,31 @@ function showSection(sectionId) {
 // Carrega os projetos para o campo de seleção no Atualizar Status
 async function carregarProjetosParaSelecao() {
   try {
+    console.log('Iniciando carregamento dos projetos para o dropdown...');
+    
     // Usa o cache local se disponível
     if (projetosCache) {
+      console.log('Usando cache local:', projetosCache);
       preencherDropdown(projetosCache);
       return;
     }
 
     console.log('Buscando nomes dos projetos do backend...');
     const response = await fetch(`${API_URL}/names`); // Chama a rota otimizada para nomes
-    if (!response.ok) throw new Error('Erro ao carregar projetos');
+    
+    if (!response.ok) {
+      console.error('Erro na resposta do backend:', response.status, response.statusText);
+      throw new Error('Erro ao carregar projetos');
+    }
+
     const projetos = await response.json();
+    console.log('Projetos retornados pelo backend:', projetos);
+
+    if (!Array.isArray(projetos) || projetos.length === 0) {
+      console.warn('Nenhum projeto encontrado ou formato inválido:', projetos);
+      preencherDropdown([]);
+      return;
+    }
 
     projetosCache = projetos; // Armazena no cache local
     preencherDropdown(projetos);
@@ -30,6 +45,7 @@ async function carregarProjetosParaSelecao() {
     alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
   }
 }
+
 
 // Preenche o dropdown com os projetos
 function preencherDropdown(projetos) {
@@ -59,7 +75,10 @@ function preencherDropdown(projetos) {
     option.textContent = projeto.nome; // Define o texto como o nome do projeto
     select.appendChild(option);
   });
+
+  console.log('Dropdown preenchido com sucesso:', select.innerHTML);
 }
+
 
 // Calcula o progresso com base nas datas
 function calcularProgresso(dataInicio, prazo) {
