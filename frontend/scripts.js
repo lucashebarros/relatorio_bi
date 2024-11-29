@@ -50,6 +50,23 @@ function preencherDropdown(projetos) {
   });
 }
 
+function calcularProgresso(dataInicio, prazo) {
+    if (!dataInicio || !prazo) return 0;
+
+    const hoje = new Date();
+    const inicio = new Date(dataInicio);
+    const prazoFinal = new Date(prazo);
+
+    if (hoje < inicio) return 0;
+    if (hoje > prazoFinal) return 100;
+
+    const totalDias = (prazoFinal - inicio) / (1000 * 60 * 60 * 24); // Total de dias
+    const diasPassados = (hoje - inicio) / (1000 * 60 * 60 * 24); // Dias passados
+
+    return Math.round((diasPassados / totalDias) * 100); // Progresso em %
+}
+
+
 // Função para listar projetos e atualizar tabela e gráfico
 async function listarProjetos() {
   try {
