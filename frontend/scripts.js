@@ -18,6 +18,7 @@ async function carregarProjetosParaSelecao() {
       return;
     }
 
+    console.log('Buscando nomes dos projetos do backend...');
     const response = await fetch(`${API_URL}/names`); // Chama a rota otimizada para nomes
     if (!response.ok) throw new Error('Erro ao carregar projetos');
     const projetos = await response.json();
@@ -35,6 +36,16 @@ function preencherDropdown(projetos) {
   const select = document.getElementById('projeto-nome');
   select.innerHTML = ''; // Limpa o campo antes de preencher
 
+  if (!projetos || projetos.length === 0) {
+    const noProjectsOption = document.createElement('option');
+    noProjectsOption.value = '';
+    noProjectsOption.textContent = 'Nenhum projeto disponível';
+    noProjectsOption.disabled = true;
+    noProjectsOption.selected = true;
+    select.appendChild(noProjectsOption);
+    return;
+  }
+
   const defaultOption = document.createElement('option');
   defaultOption.value = '';
   defaultOption.textContent = 'Selecione um projeto';
@@ -50,32 +61,32 @@ function preencherDropdown(projetos) {
   });
 }
 
+// Calcula o progresso com base nas datas
 function calcularProgresso(dataInicio, prazo) {
-    if (!dataInicio || !prazo) return 0;
+  if (!dataInicio || !prazo) return 0;
 
-    const hoje = new Date();
-    const inicio = new Date(dataInicio);
-    const prazoFinal = new Date(prazo);
+  const hoje = new Date();
+  const inicio = new Date(dataInicio);
+  const prazoFinal = new Date(prazo);
 
-    if (hoje < inicio) return 0;
-    if (hoje > prazoFinal) return 100;
+  if (hoje < inicio) return 0;
+  if (hoje > prazoFinal) return 100;
 
-    const totalDias = (prazoFinal - inicio) / (1000 * 60 * 60 * 24); // Total de dias
-    const diasPassados = (hoje - inicio) / (1000 * 60 * 60 * 24); // Dias passados
+  const totalDias = (prazoFinal - inicio) / (1000 * 60 * 60 * 24); // Total de dias
+  const diasPassados = (hoje - inicio) / (1000 * 60 * 60 * 24); // Dias passados
 
-    return Math.round((diasPassados / totalDias) * 100); // Progresso em %
+  return Math.round((diasPassados / totalDias) * 100); // Progresso em %
 }
-
 
 // Função para listar projetos e atualizar tabela e gráfico
 async function listarProjetos() {
   try {
-    // Usa o cache local se disponível
     if (projetosCache) {
       renderizarTabela(projetosCache);
       return;
     }
 
+    console.log('Buscando lista completa de projetos do backend...');
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error('Erro ao listar projetos');
     const projetos = await response.json();
@@ -171,7 +182,7 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID selecionado
+  const projetoId = document.getElementById('projeto-nome').value;
   const statusAtual = document.getElementById('status-atual').value;
   const prazo = document.getElementById('prazo').value;
 
