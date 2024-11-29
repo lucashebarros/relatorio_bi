@@ -1,4 +1,5 @@
 const API_URL = "https://relatoriobi.azurewebsites.net/projetos"; // URL da API
+let projetosCache = null; // Cache local no frontend
 
 // Alterna entre as seções
 function showSection(sectionId) {
@@ -8,38 +9,48 @@ function showSection(sectionId) {
   document.getElementById(sectionId).classList.add('active');
 }
 
-// Carrega os projetos para o campo de seleção no Atualizar Status
+// Função para carregar os projetos e preencher o dropdown no Atualizar Status
 async function carregarProjetosParaSelecao() {
   try {
-    const response = await fetch(API_URL); // Faz a requisição para a API
+    // Usa o cache local se disponível
+    if (projetosCache) {
+      preencherDropdown(projetosCache);
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/names`); // Chama a rota otimizada para nomes
     if (!response.ok) throw new Error('Erro ao carregar projetos');
     const projetos = await response.json();
 
-    const select = document.getElementById('nome'); // Seleciona o dropdown
-    select.innerHTML = ''; // Limpa o campo antes de preencher
-
-    // Adiciona uma opção inicial ao dropdown
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Selecione um projeto';
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    select.appendChild(defaultOption);
-
-    // Preenche os projetos no dropdown
-    projetos.forEach(projeto => {
-      const option = document.createElement('option');
-      option.value = projeto.id; // Define o valor como o ID do projeto
-      option.textContent = projeto.nome; // Define o texto como o nome do projeto
-      select.appendChild(option);
-    });
+    projetosCache = projetos; // Armazena no cache local
+    preencherDropdown(projetos);
   } catch (error) {
     console.error('Erro ao carregar projetos para seleção:', error);
     alert('Erro ao carregar a lista de projetos. Tente novamente mais tarde.');
   }
 }
 
-// Função para calcular progresso baseado na data de início
+// Preenche o dropdown com os projetos
+function preencherDropdown(projetos) {
+  const select = document.getElementById('projeto-nome');
+  select.innerHTML = ''; // Limpa o campo antes de preencher
+
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Selecione um projeto';
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  select.appendChild(defaultOption);
+
+  projetos.forEach(projeto => {
+    const option = document.createElement('option');
+    option.value = projeto.id; // Define o valor como o ID do projeto
+    option.textContent = projeto.nome; // Define o texto como o nome do projeto
+    select.appendChild(option);
+  });
+}
+
+// Função para calcular progresso baseado na data de início e prazo
 function calcularProgresso(dataInicio, prazo) {
   if (!dataInicio || !prazo) return 0;
 
@@ -59,47 +70,58 @@ function calcularProgresso(dataInicio, prazo) {
 // Função para listar projetos e atualizar tabela e gráfico
 async function listarProjetos() {
   try {
+    // Usa o cache local se disponível
+    if (projetosCache) {
+      renderizarTabela(projetosCache);
+      return;
+    }
+
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error('Erro ao listar projetos');
     const projetos = await response.json();
-    const table = document.getElementById('projects-table');
-    const chartData = [];
 
-    table.innerHTML = ''; // Limpa a tabela
-
-    projetos.forEach(projeto => {
-      const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${projeto.nome}</td>
-        <td>${projeto.status}</td>
-        <td>${projeto.dataInicio || 'N/A'}</td>
-        <td>${projeto.prazo || 'N/A'}</td>
-        <td>${projeto.statusAtual || 'N/A'}</td>
-        <td>${progresso}%</td>
-        <td>
-          <button onclick="abrirAtualizarStatus()">Alterar</button>
-          <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
-        </td>
-      `;
-      table.appendChild(row);
-
-      chartData.push({
-        label: projeto.nome,
-        data: progresso
-      });
-    });
-
-    renderizarGrafico(chartData); // Atualiza o gráfico
+    projetosCache = projetos; // Armazena no cache local
+    renderizarTabela(projetos);
   } catch (error) {
     console.error('Erro ao listar projetos:', error);
   }
 }
 
+// Renderiza a tabela de projetos
+function renderizarTabela(projetos) {
+  const table = document.getElementById('projects-table');
+  table.innerHTML = ''; // Limpa a tabela
+
+  projetos.forEach(projeto => {
+    const progresso = calcularProgresso(projeto.dataInicio, projeto.prazo);
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${projeto.nome}</td>
+      <td>${projeto.status}</td>
+      <td>${projeto.dataInicio || 'N/A'}</td>
+      <td>${projeto.prazo || 'N/A'}</td>
+      <td>${projeto.statusAtual || 'N/A'}</td>
+      <td>${progresso}%</td>
+      <td>
+        <button onclick="abrirAtualizarStatus()">Alterar</button>
+        <button onclick="deletarProjeto('${projeto.id}')">Excluir</button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+
+  renderizarGrafico(projetos);
+}
+
 // Renderiza o gráfico de progresso
-function renderizarGrafico(data) {
+function renderizarGrafico(projetos) {
   const ctx = document.getElementById('progress-chart').getContext('2d');
+  const data = projetos.map(projeto => ({
+    label: projeto.nome,
+    data: calcularProgresso(projeto.dataInicio, projeto.prazo)
+  }));
+
   new Chart(ctx, {
     type: 'bar',
     data: {
@@ -137,6 +159,7 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
       body: JSON.stringify({ nome, status, dataInicio, prazo, statusAtual })
     });
 
+    projetosCache = null; // Invalida o cache local
     listarProjetos();
     showSection('overview');
   } catch (error) {
@@ -165,6 +188,7 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
     });
 
     alert('Status atualizado com sucesso!');
+    projetosCache = null; // Invalida o cache local
     listarProjetos();
     showSection('overview');
   } catch (error) {
@@ -172,23 +196,24 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
   }
 });
 
-// Abre a seção Atualizar Status
-function abrirAtualizarStatus() {
-  carregarProjetosParaSelecao(); // Preenche o dropdown
-  showSection('update-status'); // Mostra a seção Atualizar Status
-}
-
 // Função para deletar projeto
 async function deletarProjeto(id) {
   if (confirm('Tem certeza que deseja excluir este projeto?')) {
     try {
       await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       alert('Projeto excluído com sucesso!');
+      projetosCache = null; // Invalida o cache local
       listarProjetos();
     } catch (error) {
       console.error('Erro ao excluir o projeto:', error);
     }
   }
+}
+
+// Abre a seção Atualizar Status
+function abrirAtualizarStatus() {
+  carregarProjetosParaSelecao(); // Preenche o dropdown
+  showSection('update-status'); // Mostra a seção Atualizar Status
 }
 
 // Carrega projetos ao inicializar
