@@ -9,7 +9,7 @@ function showSection(sectionId) {
   document.getElementById(sectionId).classList.add('active');
 }
 
-// Função para carregar os projetos e preencher o dropdown no Atualizar Status
+// Carrega os projetos para o campo de seleção no Atualizar Status
 async function carregarProjetosParaSelecao() {
   try {
     // Usa o cache local se disponível
@@ -48,23 +48,6 @@ function preencherDropdown(projetos) {
     option.textContent = projeto.nome; // Define o texto como o nome do projeto
     select.appendChild(option);
   });
-}
-
-// Função para calcular progresso baseado na data de início e prazo
-function calcularProgresso(dataInicio, prazo) {
-  if (!dataInicio || !prazo) return 0;
-
-  const hoje = new Date();
-  const inicio = new Date(dataInicio);
-  const prazoFinal = new Date(prazo);
-
-  if (hoje < inicio) return 0;
-  if (hoje > prazoFinal) return 100;
-
-  const totalDias = (prazoFinal - inicio) / (1000 * 60 * 60 * 24); // Total de dias
-  const diasPassados = (hoje - inicio) / (1000 * 60 * 60 * 24); // Dias passados
-
-  return Math.round((diasPassados / totalDias) * 100); // Progresso em %
 }
 
 // Função para listar projetos e atualizar tabela e gráfico
@@ -171,11 +154,11 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
 document.getElementById('update-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const nome = document.getElementById('nome').value; // Obtém o ID selecionado
+  const projetoId = document.getElementById('projeto-nome').value; // Obtém o ID selecionado
   const statusAtual = document.getElementById('status-atual').value;
   const prazo = document.getElementById('prazo').value;
 
-  if (!nome) {
+  if (!projetoId) {
     alert('Por favor, selecione um projeto!');
     return;
   }
@@ -195,20 +178,6 @@ document.getElementById('update-form').addEventListener('submit', async (e) => {
     console.error('Erro ao atualizar o status:', error);
   }
 });
-
-// Função para deletar projeto
-async function deletarProjeto(id) {
-  if (confirm('Tem certeza que deseja excluir este projeto?')) {
-    try {
-      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-      alert('Projeto excluído com sucesso!');
-      projetosCache = null; // Invalida o cache local
-      listarProjetos();
-    } catch (error) {
-      console.error('Erro ao excluir o projeto:', error);
-    }
-  }
-}
 
 // Abre a seção Atualizar Status
 function abrirAtualizarStatus() {
